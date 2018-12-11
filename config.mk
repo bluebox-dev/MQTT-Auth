@@ -13,7 +13,7 @@ BACKEND_MEMCACHED ?= no
 
 # Specify the path to the Mosquitto sources here
 # MOSQUITTO_SRC = /usr/local/Cellar/mosquitto/1.4.12
-MOSQUITTO_SRC = /mosquitto-1.5.4
+MOSQUITTO_SRC = /build/mosq/
 
 # Specify the path the OpenSSL here
 OPENSSLDIR = /usr
