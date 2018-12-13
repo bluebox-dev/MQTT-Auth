@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-MAINTAINER BlueBox < thanakorn.vsalab@gmail.com >
+MAINTAINER BlueBoxDev <thanakorn.vsalab@gmail.com>
 
 ENV VERSION=1.5.4 \
     DOWNLOAD_SHA256=5fd7f3454fd6d286645d032bc07f44a1c8583cec02ef2422c9eb32e0a89a9b2f \
