@@ -19,6 +19,7 @@ Three directories have been created in the image to be used for configuration, p
 Assuming the following **Add Config** as Auth in mosquitto.conf :
 ```
     auth_plugin /mosquitto/config/auth-plug.so
+    auth_opt_backends mysql
     auth_opt_host localhost
     auth_opt_port 3306
     auth_opt_dbname  testdb
@@ -28,8 +29,11 @@ Assuming the following **Add Config** as Auth in mosquitto.conf :
     auth_opt_superquery SELECT COUNT(*) FROM users WHERE username = '%s' AND super = 1
     auth_opt_aclquery SELECT topic FROM acls WHERE (username = '%s') AND (rw >= 1)
     auth_opt_anonusername AnonymouS
+    persistence true
+    persistence_location /mosquitto/data/
+    log_dest file /mosquitto/log/mosquitto.log
 ```
-Can you used file follow me: [mosquitto.conf](http://en.wikipedia.org/wiki/Markdown)
+Can you used file follow me: [mosquitto.conf](https://github.com/bluebox-dev/MQTT-Auth/blob/master/mosquitto.conf)
 ### MySQL
 Assuming the following database tables:
 ```
@@ -37,8 +41,8 @@ Assuming the following database tables:
     +----+----------+---------------------------------------------------------------------+-------+
     | id | username | pw                                                                  | super |
     +----+----------+---------------------------------------------------------------------+-------+
-    |  1 | user1    | PBKDF2$sha256$901$x8mf3JIFTUFU9C23$Mid2xcgTrKBfBdye6W/4hE3GKeksu00+ |     0 |
-    |  2 | root     | PBKDF2$sha256$901$XPkOwNbd05p5XsUn$1uPtR6hMKBedWE44nqdVg+2NPKvyGst8 |     1 |
+    |  1 | user1    | PBKDF2$sha256$901$R0Df2G5E4xreB4o1$GXFLLyZGADTnWwp39eZaw7HB5qg4oYSq |     0 |
+    |  2 | root     | PBKDF2$sha256$901$R0Df2G5E4xreB4o1$GXFLLyZGADTnWwp39eZaw7HB5qg4oYSq |     1 |
     +----+----------+---------------------------------------------------------------------+-------+
 
     mysql> SELECT * FROM acls;
@@ -49,24 +53,27 @@ Assuming the following database tables:
     |  2 | root     | test2             |  1 |
     +----+----------+-------------------+----+
 ```
-Can you load file database follow me: [database.csv](http://en.wikipedia.org/wiki/Markdown)
+Can you load file database follow me: [database.sql]()
+>```Pw:``` want to [Create Pw](https://github.com/jpmens/mosquitto-auth-plug/blob/master/np.c)
+```
+    Exemple: "password"
+    Create to => PBKDF2$sha256$901$R0Df2G5E4xreB4o1$GXFLLyZGADTnWwp39eZaw7HB5qg4oYSq
+```
 ## Run
 Run a container followed with command:
 
-**Option MQTT only:**
+>**Option1 MQTT only Use docker :**
 
     docker run  -p 1883:1883 -d -v mosquitto.conf:/mosquitto/config/mosquitto.conf blueboxdev/mqtt-auth
 
-**Option1 MQTT-Auth Use localhost database :**
-
-    docker run  -p 1883:1883 -p 3306:3306 -d -v mosquitto.conf:/mosquitto/config/mosquitto.conf blueboxdev/mqtt-auth
-
-**Option2 MQTT-Auth Use docker link database :**
+>**Option2 MQTT-Auth Use docker link database :**
 
     docker run  -p 1883:1883  -d --link testsql:db -v mosquitto.conf:/mosquitto/config/mosquitto.conf  -v log:/mosquitto/log -v data:/mosquitto/data blueboxdev/mqtt-auth
 
->```-p port``` is  port ```default:1883``` from docker link with localhost.
+* ```Check IP Docker MySQL``` for edit ip to file mosquitto.conf.
 
->```-v volume``` is volume from docker link with localhost ```$PATH: var/lib/docker/volume/```.
+*```-p port``` is  port ```default:1883``` from docker link with localhost.
 
->```--link namedabase:db``` is volume from docker dababase.
+*```-v volume``` is volume from docker link with localhost ```$PATH: var/lib/docker/volume/```.
+
+*```--link namedabase:db``` is volume from docker dababase.
